@@ -1,0 +1,3 @@
+application:
+  servers:
+    -   ip: '127.0.0.2'
