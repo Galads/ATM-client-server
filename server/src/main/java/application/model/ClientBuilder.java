@@ -1,28 +1,61 @@
 package application.model;
 
-import application.entity.TestClient;
+import application.entity.Balance;
+import application.entity.Client;
+import application.exception.ClientNotFoundException;
 import application.repository.ClientRepository;
-import com.sun.istack.NotNull;
+import application.view.ClientBalance;
+import application.view.Currencies;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+// model of project
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ClientBuilder {
     private ClientRepository clientRepository;
 
-    public List<TestClient> getAllClients() {
-        List<TestClient> clients = new ArrayList<>();
-        clientRepository
+    public List<Balance> getAllClientBalances() {
+        List<Balance> balances = new ArrayList<>();
+        /*clientRepository
                 .findAll()
-                .forEach(clients::add);
-        return clients;
+                .forEach(balances::add);*/
+
+        return balances;
     }
 
-    public void addClient(@NotNull TestClient client) {
-        clientRepository.save(client);
+    public ClientBalance getClientBalance(long accountId, short pin) {
+
+/*        Client balance = clientRepository
+                .findById(accountId) // как найти по client_id
+                .get();*/
+
+        List<Currencies> currencies = new ArrayList<>();
+
+        Client client = clientRepository
+                .findById(accountId)
+                .orElseThrow(() ->
+                new ClientNotFoundException("Client not found !"));
+
+        if (pin != client.getPin())
+            throw  new ClientNotFoundException("Client not found !");
+        client.getBalance().forEach(e ->
+                currencies.add(new Currencies(e.getName(), e.getAmount()))
+        );
+
+        return new ClientBalance(
+                client.getId(),
+                currencies
+        );
     }
+
+
+//    public void addClient(@NotNull TestClient client) {
+//    }
 }
+

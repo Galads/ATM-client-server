@@ -1,7 +1,8 @@
 package application.repository;
 
-import application.entity.TestClient;
+import application.entity.Balance;
+import application.entity.Client;
 import org.springframework.data.repository.CrudRepository;
 
-public interface ClientRepository extends CrudRepository<TestClient, Long> {
+public interface ClientRepository extends CrudRepository<Client, Long> {
 }

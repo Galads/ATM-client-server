@@ -3,6 +3,8 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
-    url: jdbc:h2:~/my_db
+    url: jdbc:h2:file:~/my_db/my_db
+  jpa:
+    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
 servers:
   ip: '127.0.0.3'
