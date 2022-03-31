@@ -4,11 +4,11 @@ import application.entity.Balance;
 import application.entity.Client;
 import application.exception.ClientNotFoundException;
 import application.repository.ClientRepository;
-import application.view.ClientBalance;
-import application.view.Currencies;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import view.ClientBalance;
+import view.Currencies;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,9 +53,5 @@ public class ClientBuilder {
                 currencies
         );
     }
-
-
-//    public void addClient(@NotNull TestClient client) {
-//    }
 }
 

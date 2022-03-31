@@ -2,22 +2,23 @@ package application.controller;
 
 import application.entity.Balance;
 import application.model.ClientBuilder;
-import application.view.ClientBalance;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import view.ClientBalance;
 
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 public class ServerController {
 
     private RestTemplate restTemplate;
 
-    @Autowired // вынести в одну или две конфигурации?
+//    @Autowired // вынести в одну или две конфигурации?
     private ClientBuilder clientBuilder;
 
     /**

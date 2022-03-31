@@ -1,6 +1,5 @@
 package application.repository;
 
-import application.entity.Balance;
 import application.entity.Client;
 import org.springframework.data.repository.CrudRepository;
 

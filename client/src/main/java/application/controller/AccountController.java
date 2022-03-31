@@ -1,16 +1,21 @@
 package application.controller;
 
-import application.domainObjects.accounts.impl.Client;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import view.ClientBalance;
 
 @RestController
+@Slf4j
 public class AccountController {
 
-    @RequestMapping("/")
-    public String sayHello() {
+    RestTemplate restTemplate = new RestTemplate();
+
+    @RequestMapping("/ping")
+    public String pingClient() {
         return "Hello spring";
     }
 
@@ -24,9 +29,12 @@ public class AccountController {
 
     @GetMapping("/ATM/accounts/{accountId}/{pin}/pin")
     public String getBalancePin( // return Client
-            @PathVariable("accountId") long accountId,
-            @PathVariable("pin") long pin) {
-        return "You're id: " + accountId + " pin: " + pin;
+                                 @PathVariable("accountId") long accountId,
+                                 @PathVariable("pin") long pin) {
+
+         String res = restTemplate
+                .getForObject("http://atm-server:8081/server/accounts/" + accountId + "/" + pin + "/balance", String.class);
+        return res;
     }
 
     /**
@@ -40,7 +48,6 @@ public class AccountController {
             @PathVariable("pass") long pass) {
 
     }*/
-
 
 
 }
