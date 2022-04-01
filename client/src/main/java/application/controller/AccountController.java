@@ -1,20 +1,26 @@
 package application.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import view.ClientBalance;
+import view.ClientError;
+
+import java.util.Optional;
 
 @RestController
 @Slf4j
 public class AccountController {
 
-    RestTemplate restTemplate = new RestTemplate();
+    private RestTemplate restTemplate = new RestTemplate();
+    @Value("${server.url}")
+    private String URL;
 
-    @RequestMapping("/ping")
+    @GetMapping("/ping")
     public String pingClient() {
         return "Hello spring";
     }
@@ -28,18 +34,18 @@ public class AccountController {
      */
 
     @GetMapping("/ATM/accounts/{accountId}/{pin}/pin")
-    public String getBalancePin( // return Client
-                                 @PathVariable("accountId") long accountId,
-                                 @PathVariable("pin") long pin) {
-
-         String res = restTemplate
-                .getForObject("http://atm-server:8081/server/accounts/" + accountId + "/" + pin + "/balance", String.class);
-        return res;
+    public ClientBalance getBalancePin(
+            @PathVariable("accountId") long accountId,
+            @PathVariable("pin") long pin) {
+        return Optional
+                .ofNullable(restTemplate.getForObject(URL + accountId + "/" + pin + "/balance", ClientBalance.class))
+                .orElseGet(() -> new ClientError("Client not found !"));
     }
 
     /**
      * 1. Авторизация по Логину и паролю
      * ...
+     * postForObject
      */
 /*    @GetMapping("/ATM/accounts/{accountId}/{login}/{pass}/login")
     public Client getBalanceLoginPass(
@@ -48,6 +54,4 @@ public class AccountController {
             @PathVariable("pass") long pass) {
 
     }*/
-
-
 }

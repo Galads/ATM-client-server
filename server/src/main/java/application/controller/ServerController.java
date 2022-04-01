@@ -1,24 +1,23 @@
 package application.controller;
 
 import application.entity.Balance;
+import application.exception.ClientNotFoundException;
 import application.model.ClientBuilder;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 import view.ClientBalance;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
 public class ServerController {
 
     private RestTemplate restTemplate;
-
-//    @Autowired // вынести в одну или две конфигурации?
     private ClientBuilder clientBuilder;
 
     /**
@@ -26,17 +25,22 @@ public class ServerController {
      * Получение баланса -> результат -> баланс конкретного счета аккаунта клиента
      */
     @GetMapping("/server/accounts/{accountId}/{pin}/balance")
-    public ClientBalance getBalanceClient(
+    public Optional<ClientBalance> getBalanceClient(
             @PathVariable("accountId") long accountId,
             @PathVariable("pin") short pin) {
-        return clientBuilder.getClientBalance(accountId, pin);
+        try {
+            return Optional.of(clientBuilder.getClientBalance(accountId, pin));
+        } catch (ClientNotFoundException ex) {
+            return Optional.empty();
+        }
     }
+
     @GetMapping("/server/clients")
-    public List<Balance> testMethod() {
+    public List<Balance> getAllClients() {
         return clientBuilder.getAllClientBalances();
     }
 
-    @RequestMapping("/ping")
+    @RequestMapping("/server/ping")
     public String helloPath() {
         return "Server available";
     }

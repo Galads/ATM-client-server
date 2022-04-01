@@ -1,3 +1,3 @@
-application:
-  servers:
-    -   ip: '127.0.0.2'
+server:
+  ip: '127.0.0.2'
+  url: "http://atm-server:8081/server/accounts/"

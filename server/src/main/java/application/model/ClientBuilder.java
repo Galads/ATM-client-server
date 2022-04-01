@@ -13,7 +13,6 @@ import view.Currencies;
 import java.util.ArrayList;
 import java.util.List;
 
-// model of project
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -22,28 +21,21 @@ public class ClientBuilder {
 
     public List<Balance> getAllClientBalances() {
         List<Balance> balances = new ArrayList<>();
-        /*clientRepository
-                .findAll()
-                .forEach(balances::add);*/
 
         return balances;
     }
 
     public ClientBalance getClientBalance(long accountId, short pin) {
 
-/*        Client balance = clientRepository
-                .findById(accountId) // как найти по client_id
-                .get();*/
-
         List<Currencies> currencies = new ArrayList<>();
 
         Client client = clientRepository
                 .findById(accountId)
                 .orElseThrow(() ->
-                new ClientNotFoundException("Client not found !"));
+                        new ClientNotFoundException("Client not found !"));
 
         if (pin != client.getPin())
-            throw  new ClientNotFoundException("Client not found !");
+            throw new ClientNotFoundException("Client not found !");
         client.getBalance().forEach(e ->
                 currencies.add(new Currencies(e.getName(), e.getAmount()))
         );
