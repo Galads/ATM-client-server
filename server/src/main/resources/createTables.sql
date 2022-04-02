@@ -43,10 +43,23 @@ FROM BALANCE;
 
 SELECT id, client_id, amount, name
 FROM BALANCE
-WHERE name = 'USD' AND client_id = 2;
+WHERE id = 1
+  AND (SELECT CLIENT.id, pin FROM CLIENT WHERE pin = 3322 AND CLIENT.id = id); // not work
+
+SELECT BALANCE.id, client_id, amount, name, login, password, pin
+FROM BALANCE
+         INNER JOIN CLIENT ON CLIENT.id = BALANCE.client_id AND CLIENT.id = 1 AND CLIENT.pin = 1234;
+
+SELECT BALANCE.id, client_id, amount, name, login, password, pin
+FROM BALANCE
+         INNER JOIN CLIENT
+                    ON CLIENT.id = BALANCE.client_id
+                        AND CLIENT.login = 'artur'
+                        AND CLIENT.password = 'qwerty';
 /* Select scope*/
 
 /* Delete scope*/
-DELETE  FROM BALANCE
+DELETE
+FROM BALANCE
 WHERE id = 4
 /* Delete scope*/
