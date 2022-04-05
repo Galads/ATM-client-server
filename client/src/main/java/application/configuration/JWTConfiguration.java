@@ -1,13 +1,13 @@
 package application.configuration;
 
+import application.jwt.JWT;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class RestConfiguration {
+public class JWTConfiguration {
     @Bean
-    public RestTemplate getRestTemplate() {
-        return new RestTemplate();
+    public JWT getJwtToken() {
+        return new JWT();
     }
 }
