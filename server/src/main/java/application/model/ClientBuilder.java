@@ -1,28 +1,38 @@
 package application.model;
 
-import application.entity.Balance;
 import application.entity.Client;
 import application.exception.ClientNotFoundException;
 import application.repository.ClientRepository;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import view.ClientBalance;
 import view.Currencies;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @AllArgsConstructor
-@Slf4j
 public class ClientBuilder {
     private ClientRepository clientRepository;
 
-    public List<Balance> getAllClientBalances() {
-        List<Balance> balances = new ArrayList<>();
+    public List<ClientBalance> getAllClientBalances() {
+        List<Client> clientBalances = new ArrayList<>();
 
-        return balances;
+        StreamSupport.stream(clientRepository.findAll().spliterator(), false)
+                .forEach(clientBalances::add);
+
+        return clientBalances.stream()
+                .map(e -> {
+                            List<Currencies> currencies = e.getBalance().stream()
+                                    .map(balance -> new Currencies(balance.getName(), balance.getAmount()))
+                                    .collect(Collectors.toList());
+
+                            return new ClientBalance(e.getId(), currencies);
+                        }
+                ).collect(Collectors.toList());
     }
 
     public ClientBalance getClientBalance(long accountId, short pin) {

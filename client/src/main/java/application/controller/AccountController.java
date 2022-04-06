@@ -1,9 +1,7 @@
 package application.controller;
 
-import dto.ClientBody;
-import lombok.AllArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import application.model.AuthenticationService;
+import dto.ClientRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -14,15 +12,16 @@ import view.ClientError;
 import java.util.Optional;
 
 @RestController
-@Slf4j
+@RequestMapping("/client")
 public class AccountController {
-
     @Value("${server.url}")
     private String URL;
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private AuthenticationService authenticationService;
 
-    @GetMapping("/client/ping")
+    @GetMapping("/ping")
     public String pingClient() {
         return "Client service available !";
     }
@@ -34,7 +33,7 @@ public class AccountController {
      * 4. отправка по Rest dto клиента
      * 5. получение и возвращение ответа
      */
-    @GetMapping("/client/accounts/{accountId}/{pin}/pin")
+    @GetMapping("/{accountId}/{pin}/pin")
     public ClientBalance getBalancePin(
             @PathVariable("accountId") long accountId,
             @PathVariable("pin") long pin) {
@@ -47,11 +46,16 @@ public class AccountController {
      * 1. Авторизация по Логину и паролю
      * ...
      */
-    @PostMapping("/client/accounts/login")
+    @PostMapping("/login")
     public ClientBalance getBalanceLoginPass(
-            @RequestBody ClientBody body) {
+            @RequestBody ClientRequest body) {
         return Optional
                 .ofNullable(restTemplate.postForObject(URL + "/login", body, ClientBalance.class))
-                .orElseGet(() -> new ClientError("Client not found ! : Uncorrected login or password"));
+                .orElseGet(() -> new ClientError("Client not found !: Uncorrected login or password"));
+    }
+
+    @PostMapping("/auth")
+    public String authenticate(@RequestBody ClientRequest body) {
+        return authenticationService.authenticate(body);
     }
 }

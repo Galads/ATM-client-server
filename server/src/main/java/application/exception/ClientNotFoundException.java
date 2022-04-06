@@ -11,4 +11,16 @@ public class ClientNotFoundException extends RuntimeException {
     public ClientNotFoundException(String msg) {
         super(msg);
     }
+
+    public ClientNotFoundException(String s, Throwable throwable) {
+        super(s, throwable);
+    }
+
+    public ClientNotFoundException(Throwable throwable) {
+        super(throwable);
+    }
+
+    protected ClientNotFoundException(String s, Throwable throwable, boolean b, boolean b1) {
+        super(s, throwable, b, b1);
+    }
 }

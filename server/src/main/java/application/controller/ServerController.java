@@ -1,9 +1,10 @@
 package application.controller;
 
-import application.entity.Balance;
 import application.exception.ClientNotFoundException;
+import application.model.AuthenticationService;
 import application.model.ClientBuilder;
-import dto.ClientBody;
+import dto.AuthenticationResponse;
+import dto.ClientRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import view.ClientBalance;
@@ -13,15 +14,16 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/server")
 public class ServerController {
-
     private ClientBuilder clientBuilder;
+    private AuthenticationService authenticationService;
 
     /**
      * Обращение к БД, валидация клиента
      * Получение баланса -> результат -> баланс конкретного счета аккаунта клиента
      */
-    @GetMapping("/server/accounts/{accountId}/{pin}/balance")
+    @GetMapping("/{accountId}/{pin}/balance") // admin
     public Optional<ClientBalance> getBalanceClientIdPin(
             @PathVariable("accountId") long accountId,
             @PathVariable("pin") short pin) {
@@ -32,8 +34,8 @@ public class ServerController {
         }
     }
 
-    @PostMapping("server/accounts/login")
-    public Optional<ClientBalance> getBalanceClientLoginPass(@RequestBody ClientBody body) {
+    @PostMapping("/login") // конкретный юзер, видит только свои данные
+    public Optional<ClientBalance> getBalanceClientLoginPass(@RequestBody ClientRequest body) {
         try {
             return Optional.of(clientBuilder.getClientBalance(body.getLogin(), body.getPassword()));
         } catch (ClientNotFoundException ex) {
@@ -41,13 +43,18 @@ public class ServerController {
         }
     }
 
-    @GetMapping("/server/accounts/all")
-    public List<Balance> getAllClients() {
+    @GetMapping("/all")
+    public List<ClientBalance> getAllClients() {
         return clientBuilder.getAllClientBalances();
     }
 
-    @GetMapping("/server/ping")
+    @GetMapping("/ping")
     public String helloPath() {
         return "Server available";
+    }
+
+    @PostMapping("/auth")
+    public AuthenticationResponse authenticateUser(@RequestBody ClientRequest clientRequest) {
+        return authenticationService.authenticate(clientRequest);
     }
 }
