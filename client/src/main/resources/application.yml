@@ -1,0 +1,4 @@
+server:
+  ip: '127.0.0.2'
+  url: "http://atm-server:8081/server/"
+  port: 8080
