@@ -1,7 +1,9 @@
 package application.security.filters;
 
+import application.exception.ClientNotFoundException;
 import application.security.jwt.JWT;
 import application.security.service.JPAUserDetailsService;
+import io.jsonwebtoken.MalformedJwtException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,8 +35,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String jwtCode = authHeader.substring(7);
-            String username = jwt.getUsername(jwtCode);
+                String jwtCode = authHeader.substring(7);
+                String username = jwt.getUsername(jwtCode); // рантайм исключение
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = jpaUserDetailsService.loadUserByUsername(username);

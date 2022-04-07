@@ -10,15 +10,15 @@ import java.util.Date;
 import java.util.function.Function;
 
 public class JWT {
-    private String KEY = "secret+key_";
+    private String KEY = "secret+key_"; // достать из проперти
 
     public String generateToken(UserDetails userDetails) {
         return createToken(userDetails.getUsername());
     }
 
-    private String createToken(String userName) {
+    private String createToken(String username) {
         return Jwts.builder()
-                .setSubject(userName)                                                   // не обязательно
+                .setSubject(username)                                                   // не обязательно
                 .setIssuedAt(new Date())                                                // не обязательно
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 1000))    // не обязательно
                 .signWith(SignatureAlgorithm.HS256, KEY).compact();
@@ -28,8 +28,12 @@ public class JWT {
         return getUsername(username).equals(userDetails.getUsername());
     }
 
-    public String getUsername(String token) {
-        return getClaim(token, Claims::getSubject);
+    public String getUsername(String username) {
+//        try {
+            return getClaim(username, Claims::getSubject);
+//        } catch (MalformedJwtException ex) {
+//            throw new ClientNotFoundException("Client not found !: unauthorized token");
+//        }
     }
 
     public Date getOverDate(String token) {
