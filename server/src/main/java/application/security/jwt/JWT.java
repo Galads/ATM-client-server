@@ -1,16 +1,24 @@
 package application.security.jwt;
 
 
+import application.properties.ServerProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.function.Function;
 
+
+@Component
+@AllArgsConstructor
+@Slf4j
 public class JWT {
-    private String KEY = "secret+key_"; // достать из проперти
+    private ServerProperties serverProperties;
 
     public String generateToken(UserDetails userDetails) {
         return createToken(userDetails.getUsername());
@@ -21,7 +29,7 @@ public class JWT {
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 1000))
-                .signWith(SignatureAlgorithm.HS256, KEY).compact();
+                .signWith(SignatureAlgorithm.HS256, serverProperties.getSECRET_KEY()).compact();
     }
 
     public boolean validateUsername(String username, UserDetails userDetails) {
@@ -43,7 +51,7 @@ public class JWT {
 
     private Claims getBodyJWT(String token) {
         return Jwts.parser()
-                .setSigningKey(KEY)
+                .setSigningKey(serverProperties.getSECRET_KEY())
                 .parseClaimsJws(token)
                 .getBody();
     }

@@ -5,6 +5,8 @@ import application.model.AuthenticationService;
 import application.model.ClientBuilder;
 import dto.AuthenticationResponse;
 import dto.ClientRequest;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.SignatureException;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import view.ClientBalance;
@@ -34,7 +36,7 @@ public class ServerController {
         }
     }
 
-    @PostMapping("/login") // конкретный юзер, видит только свои данные
+    @PostMapping("/login")
     public Optional<ClientBalance> getBalanceClientLoginPass(@RequestBody ClientRequest body) {
         try {
             return Optional.of(clientBuilder.getClientBalance(body.getLogin(), body.getPassword()));

@@ -1,5 +1,7 @@
 package application.model;
 
+import application.model.status.Status;
+import application.properties.AtmProperties;
 import dto.AuthenticationResponse;
 import dto.ClientRequest;
 import lombok.AllArgsConstructor;
@@ -11,26 +13,26 @@ import org.springframework.web.client.RestTemplate;
 @AllArgsConstructor
 @Getter
 public class AuthenticationService {
-    private final String SERVER_URL_AUTH = "http://atm-server:8081/server/auth";
+    private AtmProperties atmProperties;
     private UserContext userContext;
     private RestTemplate restTemplate;
 
-    public String authenticate(ClientRequest clientRequest) {
+    public Status authenticate(ClientRequest clientRequest) {
         AuthenticationResponse authenticationResponse = restTemplate.postForObject(
-                SERVER_URL_AUTH,
+                atmProperties.getSERVER_AUTH_URL(),
                 clientRequest,
                 AuthenticationResponse.class
         );
 
         if (authenticationResponse != null && !authenticationResponse.getJwt().isEmpty()) {
             userContext.setJwtToken(authenticationResponse.getJwt());
-            return "Success";
+            return Status.SUCCESS;
         }
-        return "Failure"; //сделать enum
+        return Status.FAILURE;
     }
 
-    public String logout() {
+    public Status logout() {
         userContext.setJwtToken(null);
-        return "Success";
+        return Status.SUCCESS;
     }
 }

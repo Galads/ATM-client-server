@@ -38,7 +38,7 @@ public class ClientBuilder {
                         }
                 ).collect(Collectors.toList());
     }
-
+    //отрефакторить
     public ClientBalance getClientBalance(long accountId, short pin) {
         JPAUserDetails userDetails = getUserDetails();
 

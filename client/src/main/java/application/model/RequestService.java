@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import view.ClientBalance;
 import view.ClientError;
@@ -20,11 +21,19 @@ public class RequestService {
     private RestTemplate restTemplate;
 
     public ClientBalance requestForObject(String url, HttpMethod method, Class<ClientBalance> type) {
-        return createRequest(url, method, getEntityWithToken(), type);
+        try {
+            return createRequest(url, method, getEntityWithToken(), type);
+        } catch (HttpClientErrorException ex) {
+            return new ClientError("Forbidden access !");
+        }
     }
 
     public ClientBalance requestForObject(String url, ClientRequest body, HttpMethod method, Class<ClientBalance> type) {
-        return createRequest(url, method, getEntityWithToken(body), type);
+        try {
+            return createRequest(url, method, getEntityWithToken(body), type);
+        } catch (HttpClientErrorException ex) {
+            return new ClientError("Forbidden access !");
+        }
     }
 
     public ClientBalance createRequest(String url,
@@ -48,7 +57,8 @@ public class RequestService {
 
     private HttpHeaders createHeader() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + authenticationService.getUserContext().getJwtToken());
+        if (authenticationService.getUserContext().getJwtToken() != null)
+            headers.set("Authorization", "Bearer " + authenticationService.getUserContext().getJwtToken());
         return headers;
     }
 }

@@ -29,9 +29,7 @@ public class AuthenticationService {
         } catch (BadCredentialsException ex) {
             return new AuthenticationResponse("");
         }
-
         UserDetails userDetails = userDetailsService.loadUserByUsername(clientRequest.getLogin());
-
         return new AuthenticationResponse(jwtCreator.generateToken(userDetails));
     }
 }

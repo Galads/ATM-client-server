@@ -2,11 +2,13 @@ package application.controller;
 
 import application.model.AuthenticationService;
 import application.model.RequestService;
+import application.model.status.Status;
 import application.properties.AtmProperties;
 import dto.ClientRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import view.ClientBalance;
 
 @RestController
@@ -33,11 +35,11 @@ public class AccountController {
     public ClientBalance getBalancePin(
             @PathVariable("accountId") long accountId,
             @PathVariable("pin") long pin) {
-        return requestService.requestForObject(
-                properties.getURL() + accountId + "/" + pin + "/balance",
-                HttpMethod.GET,
-                ClientBalance.class
-        );
+            return requestService.requestForObject(
+                    properties.getSERVER_URL() + accountId + "/" + pin + "/balance",
+                    HttpMethod.GET,
+                    ClientBalance.class
+            );
     }
 
     /**
@@ -47,19 +49,19 @@ public class AccountController {
     @PostMapping("/login")
     public ClientBalance getBalanceLoginPass(@RequestBody ClientRequest body) {
         return requestService.requestForObject(
-                properties.getURL() + "/login",
+                properties.getSERVER_URL() + "/login",
                 body,
                 HttpMethod.POST,
                 ClientBalance.class);
     }
 
     @PostMapping("/auth")
-    public String authenticate(@RequestBody ClientRequest body) {
+    public Status authenticate(@RequestBody ClientRequest body) {
         return authenticationService.authenticate(body);
     }
 
     @PostMapping("/logout")
-    public String logout() {
+    public Status logout() {
         return authenticationService.logout();
     }
 }

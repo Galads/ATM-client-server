@@ -6,10 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Getter
-public class AtmProperties {
-    @Value("${server.url}")
-    private String SERVER_URL;
-
-    @Value("${server.auth}")
-    private String SERVER_AUTH_URL;
+public class ServerProperties {
+    @Value("${server.auth.secret}")
+    private String SECRET_KEY;
 }
