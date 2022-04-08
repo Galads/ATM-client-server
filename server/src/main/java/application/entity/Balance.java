@@ -18,7 +18,7 @@ public class Balance {
 
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
-    private Client client_id;// many to one
+    private Client client_id;
     private BigDecimal amount;
     private String name;
 }

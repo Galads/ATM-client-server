@@ -36,7 +36,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String jwtCode = authHeader.substring(7);
-                String username = jwt.getUsername(jwtCode); // рантайм исключение
+                String username = jwt.getUsername(jwtCode);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = jpaUserDetailsService.loadUserByUsername(username);

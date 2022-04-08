@@ -18,9 +18,9 @@ public class JWT {
 
     private String createToken(String username) {
         return Jwts.builder()
-                .setSubject(username)                                                   // не обязательно
-                .setIssuedAt(new Date())                                                // не обязательно
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 1000))    // не обязательно
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 1000))
                 .signWith(SignatureAlgorithm.HS256, KEY).compact();
     }
 
@@ -29,11 +29,7 @@ public class JWT {
     }
 
     public String getUsername(String username) {
-//        try {
-            return getClaim(username, Claims::getSubject);
-//        } catch (MalformedJwtException ex) {
-//            throw new ClientNotFoundException("Client not found !: unauthorized token");
-//        }
+        return getClaim(username, Claims::getSubject);
     }
 
     public Date getOverDate(String token) {

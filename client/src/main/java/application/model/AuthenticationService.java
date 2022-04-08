@@ -26,7 +26,7 @@ public class AuthenticationService {
             userContext.setJwtToken(authenticationResponse.getJwt());
             return "Success";
         }
-        return "Failure";
+        return "Failure"; //сделать enum
     }
 
     public String logout() {
