@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class AuthenticationResponse {
-    private String jwt;
+public class ServerResponse {
+    private String result;
 }

@@ -12,4 +12,7 @@ public class AtmProperties {
 
     @Value("${server.auth}")
     private String SERVER_AUTH_URL;
+
+    @Value("${server.registration}")
+    private String SERVER_REGISTRATION_URL;
 }

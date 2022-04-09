@@ -5,10 +5,10 @@ import application.model.RequestService;
 import application.model.status.Status;
 import application.properties.AtmProperties;
 import dto.ClientRequest;
+import dto.RegistrationRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 import view.ClientBalance;
 
 @RestController
@@ -47,21 +47,26 @@ public class AccountController {
      * ...
      */
     @PostMapping("/login")
-    public ClientBalance getBalanceLoginPass(@RequestBody ClientRequest body) {
+    public ClientBalance getBalanceLoginPass(@RequestBody ClientRequest request) {
         return requestService.requestForObject(
                 properties.getSERVER_URL() + "/login",
-                body,
+                request,
                 HttpMethod.POST,
                 ClientBalance.class);
     }
 
     @PostMapping("/auth")
-    public Status authenticate(@RequestBody ClientRequest body) {
-        return authenticationService.authenticate(body);
+    public Status authenticate(@RequestBody ClientRequest request) {
+        return authenticationService.authenticate(request);
     }
 
     @PostMapping("/logout")
     public Status logout() {
         return authenticationService.logout();
+    }
+
+    @PostMapping("/register")
+    public Status register(@RequestBody RegistrationRequest request) {
+        return authenticationService.registration(request);
     }
 }

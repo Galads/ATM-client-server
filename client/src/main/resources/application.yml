@@ -2,4 +2,5 @@ server:
   ip: '127.0.0.2'
   url: "http://atm-server:8081/server/"
   auth: "http://atm-server:8081/server/auth"
+  registration: "http://atm-server:8081/server/register"
   port: 8080

@@ -2,7 +2,7 @@ package application.model;
 
 import application.security.jwt.JWT;
 import application.security.service.JPAUserDetailsService;
-import dto.AuthenticationResponse;
+import dto.ServerResponse;
 import dto.ClientRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,7 +18,7 @@ public class AuthenticationService {
     private JPAUserDetailsService userDetailsService;
     private JWT jwtCreator;
 
-    public AuthenticationResponse authenticate(ClientRequest clientRequest) {
+    public ServerResponse authenticate(ClientRequest clientRequest) {
         UsernamePasswordAuthenticationToken userToken = new UsernamePasswordAuthenticationToken(
                 clientRequest.getLogin(),
                 clientRequest.getPassword()
@@ -27,9 +27,9 @@ public class AuthenticationService {
         try {
             authenticationManager.authenticate(userToken);
         } catch (BadCredentialsException ex) {
-            return new AuthenticationResponse("");
+            return new ServerResponse("");
         }
         UserDetails userDetails = userDetailsService.loadUserByUsername(clientRequest.getLogin());
-        return new AuthenticationResponse(jwtCreator.generateToken(userDetails));
+        return new ServerResponse(jwtCreator.generateToken(userDetails));
     }
 }

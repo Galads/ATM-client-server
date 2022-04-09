@@ -4,6 +4,8 @@ import application.entity.Client;
 import application.exception.ClientNotFoundException;
 import application.repository.ClientRepository;
 import application.security.JPAUserDetails;
+import dto.RegistrationRequest;
+import dto.ServerResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class ClientBuilder {
+public class ClientService {
 
     private ClientRepository clientRepository;
 
@@ -38,6 +40,7 @@ public class ClientBuilder {
                         }
                 ).collect(Collectors.toList());
     }
+
     //отрефакторить
     public ClientBalance getClientBalance(long accountId, short pin) {
         JPAUserDetails userDetails = getUserDetails();
@@ -82,6 +85,14 @@ public class ClientBuilder {
         fillCurrencies(client, currencies);
 
         return new ClientBalance(client.getId(), currencies);
+    }
+
+    public ServerResponse registration(RegistrationRequest request) {
+        clientRepository.save(new Client(
+                request.getLogin(),
+                request.getPassword(),
+                request.getPin()));
+        return new ServerResponse("Ok");
     }
 
     private void fillCurrencies(Client client, List<Currencies> arr) {

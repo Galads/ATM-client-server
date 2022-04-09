@@ -2,8 +2,8 @@ package application.model;
 
 import application.model.status.Status;
 import application.properties.AtmProperties;
-import dto.AuthenticationResponse;
 import dto.ClientRequest;
+import dto.ServerResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -18,17 +18,28 @@ public class AuthenticationService {
     private RestTemplate restTemplate;
 
     public Status authenticate(ClientRequest clientRequest) {
-        AuthenticationResponse authenticationResponse = restTemplate.postForObject(
-                atmProperties.getSERVER_AUTH_URL(),
-                clientRequest,
-                AuthenticationResponse.class
-        );
-
-        if (authenticationResponse != null && !authenticationResponse.getJwt().isEmpty()) {
-            userContext.setJwtToken(authenticationResponse.getJwt());
+        ServerResponse serverResponse = responseUrl(atmProperties.getSERVER_AUTH_URL(), clientRequest);
+        if (serverResponse != null && !serverResponse.getResult().isEmpty()) {
+            userContext.setJwtToken(serverResponse.getResult());
             return Status.SUCCESS;
         }
         return Status.FAILURE;
+    }
+
+    public Status registration(ClientRequest clientRequest) {
+        ServerResponse serverResponse = responseUrl(atmProperties.getSERVER_REGISTRATION_URL(), clientRequest);
+
+        if (serverResponse != null && !serverResponse.getResult().isEmpty())
+            return Status.SUCCESS;
+        return Status.FAILURE;
+    }
+
+    private ServerResponse responseUrl(String URL, ClientRequest request) {
+        return restTemplate.postForObject(
+                URL,
+                request,
+                ServerResponse.class
+        );
     }
 
     public Status logout() {

@@ -16,7 +16,6 @@ import java.util.function.Function;
 
 @Component
 @AllArgsConstructor
-@Slf4j
 public class JWT {
     private ServerProperties serverProperties;
 

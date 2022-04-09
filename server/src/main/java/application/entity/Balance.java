@@ -1,5 +1,6 @@
 package application.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class Balance {
     @Id
