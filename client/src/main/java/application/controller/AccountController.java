@@ -24,28 +24,17 @@ public class AccountController {
         return "Client service available !";
     }
 
-    /**
-     * 1. Авторизация по пин-коду
-     * 2. получение данных клиента из запроса
-     * 3. создание сущности клиента
-     * 4. отправка по Rest dto клиента
-     * 5. получение и возврат ответа
-     */
     @GetMapping("/{accountId}/{pin}/pin")
     public ClientBalance getBalancePin(
             @PathVariable("accountId") long accountId,
             @PathVariable("pin") long pin) {
-            return requestService.requestForObject(
-                    properties.getSERVER_URL() + accountId + "/" + pin + "/balance",
-                    HttpMethod.GET,
-                    ClientBalance.class
-            );
+        return requestService.requestForObject(
+                properties.getSERVER_URL() + accountId + "/" + pin + "/balance",
+                HttpMethod.GET,
+                ClientBalance.class
+        );
     }
 
-    /**
-     * 1. Авторизация по Логину и паролю
-     * ...
-     */
     @PostMapping("/login")
     public ClientBalance getBalanceLoginPass(@RequestBody ClientRequest request) {
         return requestService.requestForObject(

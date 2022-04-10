@@ -1,16 +1,15 @@
 package application.controller;
 
-import application.exception.ClientNotFoundException;
 import application.model.AuthenticationService;
 import application.model.ClientService;
+import application.model.utils.ResponseWrapper;
+import dto.ClientRequest;
 import dto.RegistrationRequest;
 import dto.ServerResponse;
-import dto.ClientRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import view.ClientBalance;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -20,33 +19,18 @@ public class ServerController {
     private ClientService clientService;
     private AuthenticationService authenticationService;
 
-    /**
-     * Обращение к БД, валидация клиента
-     * Получение баланса -> результат -> баланс конкретного счета аккаунта клиента
-     */
-    @GetMapping("/{accountId}/{pin}/balance") // admin
+    @GetMapping("/{accountId}/{pin}/balance")
     public Optional<ClientBalance> getBalanceClientIdPin(
             @PathVariable("accountId") long accountId,
             @PathVariable("pin") short pin) {
-        try {
-            return Optional.of(clientService.getClientBalance(accountId, pin));
-        } catch (ClientNotFoundException ex) {
-            return Optional.empty();
-        }
+        return ResponseWrapper.wrap((i, p) -> clientService.getClientBalance(i, p), accountId, pin);
     }
 
     @PostMapping("/login")
     public Optional<ClientBalance> getBalanceClientLoginPass(@RequestBody ClientRequest request) {
-        try {
-            return Optional.of(clientService.getClientBalance(request.getLogin(), request.getPassword()));
-        } catch (ClientNotFoundException ex) {
-            return Optional.empty();
-        }
-    }
-
-    @GetMapping("/all")
-    public List<ClientBalance> getAllClients() {
-        return clientService.getAllClientBalances();
+        return ResponseWrapper.wrap((l, p) ->
+                        clientService.getClientBalance(l, p),
+                request.getLogin(), request.getPassword());
     }
 
     @GetMapping("/ping")

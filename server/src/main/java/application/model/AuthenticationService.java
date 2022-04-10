@@ -2,8 +2,8 @@ package application.model;
 
 import application.security.jwt.JWT;
 import application.security.service.JPAUserDetailsService;
-import dto.ServerResponse;
 import dto.ClientRequest;
+import dto.ServerResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
