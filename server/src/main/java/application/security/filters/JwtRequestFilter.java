@@ -21,7 +21,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-    private JPAUserDetailsService  jpaUserDetailsService;
+    private JPAUserDetailsService jpaUserDetailsService;
     private JWT jwt;
 
     @Override
@@ -31,7 +31,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             FilterChain filterChain) throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
-
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String jwtCode = authHeader.substring(7);
             String username = jwt.getUsername(jwtCode);
@@ -40,7 +39,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 UserDetails userDetails = jpaUserDetailsService.loadUserByUsername(username);
 
                 if (jwt.validateUsername(jwtCode, userDetails)) {
-                    UsernamePasswordAuthenticationToken  authToken = new UsernamePasswordAuthenticationToken(
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
                             userDetails.getAuthorities()

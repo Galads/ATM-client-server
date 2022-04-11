@@ -1,6 +1,7 @@
 package application.security;
 
 import application.entity.Client;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,16 +9,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-
 @NoArgsConstructor
+@Getter
 public class JPAUserDetails implements UserDetails {
     private String username;
     private String password;
+    private long id;
+    private short pin;
     private List<GrantedAuthority> authorities;
 
     public JPAUserDetails(Client client) {
         username = client.getLogin();
         password = client.getPassword();
+        pin = client.getPin();
+        id = client.getId();
     }
 
     @Override

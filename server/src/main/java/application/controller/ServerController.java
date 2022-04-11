@@ -1,60 +1,50 @@
 package application.controller;
 
-import application.exception.ClientNotFoundException;
 import application.model.AuthenticationService;
-import application.model.ClientBuilder;
-import dto.AuthenticationResponse;
+import application.model.ClientService;
+import application.model.utils.ResponseWrapper;
 import dto.ClientRequest;
+import dto.RegistrationRequest;
+import dto.ServerResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import view.ClientBalance;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/server")
 public class ServerController {
-    private ClientBuilder clientBuilder;
+    private ClientService clientService;
     private AuthenticationService authenticationService;
 
-    /**
-     * Обращение к БД, валидация клиента
-     * Получение баланса -> результат -> баланс конкретного счета аккаунта клиента
-     */
-    @GetMapping("/{accountId}/{pin}/balance") // admin
+    @GetMapping("/{accountId}/{pin}/balance")
     public Optional<ClientBalance> getBalanceClientIdPin(
             @PathVariable("accountId") long accountId,
             @PathVariable("pin") short pin) {
-        try {
-            return Optional.of(clientBuilder.getClientBalance(accountId, pin));
-        } catch (ClientNotFoundException ex) {
-            return Optional.empty();
-        }
+        return ResponseWrapper.wrap((i, p) -> clientService.getClientBalance(i, p), accountId, pin);
     }
 
-    @PostMapping("/login") // конкретный юзер, видит только свои данные
-    public Optional<ClientBalance> getBalanceClientLoginPass(@RequestBody ClientRequest body) {
-        try {
-            return Optional.of(clientBuilder.getClientBalance(body.getLogin(), body.getPassword()));
-        } catch (ClientNotFoundException ex) {
-            return Optional.empty();
-        }
-    }
-
-    @GetMapping("/all")
-    public List<ClientBalance> getAllClients() {
-        return clientBuilder.getAllClientBalances();
+    @PostMapping("/login")
+    public Optional<ClientBalance> getBalanceClientLoginPass(@RequestBody ClientRequest request) {
+        return ResponseWrapper.wrap((l, p) ->
+                        clientService.getClientBalance(l, p),
+                request.getLogin(), request.getPassword());
     }
 
     @GetMapping("/ping")
-    public String helloPath() {
+    public String ping() {
         return "Server available";
     }
 
     @PostMapping("/auth")
-    public AuthenticationResponse authenticateUser(@RequestBody ClientRequest clientRequest) {
-        return authenticationService.authenticate(clientRequest);
+    public ServerResponse authenticateUser(@RequestBody ClientRequest request) {
+        return authenticationService.authenticate(request);
+    }
+
+    @PostMapping("/register")
+    public ServerResponse registerUser(@RequestBody RegistrationRequest request) {
+        return clientService.registration(request);
     }
 }

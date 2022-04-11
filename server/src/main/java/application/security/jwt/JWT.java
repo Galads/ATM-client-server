@@ -1,35 +1,41 @@
 package application.security.jwt;
 
 
+import application.properties.ServerProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.function.Function;
 
+
+@Component
+@AllArgsConstructor
 public class JWT {
-    private String KEY = "secret+key_";
+    private ServerProperties serverProperties;
 
     public String generateToken(UserDetails userDetails) {
         return createToken(userDetails.getUsername());
     }
 
-    private String createToken(String userName) {
+    private String createToken(String username) {
         return Jwts.builder()
-                .setSubject(userName)                                                   // не обязательно
-                .setIssuedAt(new Date())                                                // не обязательно
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 1000))    // не обязательно
-                .signWith(SignatureAlgorithm.HS256, KEY).compact();
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 1000))
+                .signWith(SignatureAlgorithm.HS256, serverProperties.getSECRET_KEY()).compact();
     }
 
     public boolean validateUsername(String username, UserDetails userDetails) {
         return getUsername(username).equals(userDetails.getUsername());
     }
 
-    public String getUsername(String token) {
-        return getClaim(token, Claims::getSubject);
+    public String getUsername(String username) {
+        return getClaim(username, Claims::getSubject);
     }
 
     public Date getOverDate(String token) {
@@ -43,7 +49,7 @@ public class JWT {
 
     private Claims getBodyJWT(String token) {
         return Jwts.parser()
-                .setSigningKey(KEY)
+                .setSigningKey(serverProperties.getSECRET_KEY())
                 .parseClaimsJws(token)
                 .getBody();
     }

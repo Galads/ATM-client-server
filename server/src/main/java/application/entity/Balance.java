@@ -1,24 +1,24 @@
 package application.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class Balance {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
-    private Client client_id;// many to one
+    private Client client_id;
     private BigDecimal amount;
     private String name;
 }

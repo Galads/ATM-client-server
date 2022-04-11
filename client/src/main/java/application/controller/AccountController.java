@@ -1,61 +1,61 @@
 package application.controller;
 
 import application.model.AuthenticationService;
+import application.model.RequestService;
+import application.model.status.Status;
+import application.properties.AtmProperties;
 import dto.ClientRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import dto.RegistrationRequest;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import view.ClientBalance;
-import view.ClientError;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/client")
+@AllArgsConstructor
 public class AccountController {
-    @Value("${server.url}")
-    private String URL;
-    @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
+    private AtmProperties properties;
     private AuthenticationService authenticationService;
+    private RequestService requestService;
 
     @GetMapping("/ping")
     public String pingClient() {
         return "Client service available !";
     }
 
-    /**
-     * 1. Авторизация по пин-коду
-     * 2. получение данных клиента из запроса
-     * 3. создание сущности клиента
-     * 4. отправка по Rest dto клиента
-     * 5. получение и возвращение ответа
-     */
     @GetMapping("/{accountId}/{pin}/pin")
     public ClientBalance getBalancePin(
             @PathVariable("accountId") long accountId,
             @PathVariable("pin") long pin) {
-        return Optional
-                .ofNullable(restTemplate.getForObject(URL + accountId + "/" + pin + "/balance", ClientBalance.class))
-                .orElseGet(() -> new ClientError("Client not found !"));
+        return requestService.requestForObject(
+                properties.getSERVER_URL() + accountId + "/" + pin + "/balance",
+                HttpMethod.GET,
+                ClientBalance.class
+        );
     }
 
-    /**
-     * 1. Авторизация по Логину и паролю
-     * ...
-     */
     @PostMapping("/login")
-    public ClientBalance getBalanceLoginPass(
-            @RequestBody ClientRequest body) {
-        return Optional
-                .ofNullable(restTemplate.postForObject(URL + "/login", body, ClientBalance.class))
-                .orElseGet(() -> new ClientError("Client not found !: Uncorrected login or password"));
+    public ClientBalance getBalanceLoginPass(@RequestBody ClientRequest request) {
+        return requestService.requestForObject(
+                properties.getSERVER_URL() + "/login",
+                request,
+                HttpMethod.POST,
+                ClientBalance.class);
     }
 
     @PostMapping("/auth")
-    public String authenticate(@RequestBody ClientRequest body) {
-        return authenticationService.authenticate(body);
+    public Status authenticate(@RequestBody ClientRequest request) {
+        return authenticationService.authenticate(request);
+    }
+
+    @PostMapping("/logout")
+    public Status logout() {
+        return authenticationService.logout();
+    }
+
+    @PostMapping("/register")
+    public Status register(@RequestBody RegistrationRequest request) {
+        return authenticationService.registration(request);
     }
 }

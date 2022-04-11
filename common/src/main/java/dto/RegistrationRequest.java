@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class ClientRequest {
-    private String login;
-    private String password;
+public class RegistrationRequest extends ClientRequest {
+    private short pin;
 }
