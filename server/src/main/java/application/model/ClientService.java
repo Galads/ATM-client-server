@@ -4,67 +4,84 @@ import application.entity.Client;
 import application.exception.ClientNotFoundException;
 import application.repository.ClientRepository;
 import application.security.JPAUserDetails;
+import dto.ClientRequest;
+import dto.ClientRequestOperations;
 import dto.RegistrationRequest;
 import dto.ServerResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import view.ClientBalance;
 import view.Currencies;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 @Service
 @AllArgsConstructor
 public class ClientService {
-
     private ClientRepository clientRepository;
+    private AuthorizationService authorizationService;
+    private AuthorizationDetails authorizationDetails;
 
     public ClientBalance getClientBalance(long accountId, short pin) {
-        JPAUserDetails userDetails = getUserDetails();
+        JPAUserDetails userDetails = authorizationService.getUserDetails();
 
-        boolean authResult = isAuthenticate(String.valueOf(accountId),
+        boolean authResult = authorizationService.isAuthenticate(String.valueOf(accountId),
                 String.valueOf(pin),
                 userDetails::getId,
                 userDetails::getPin);
         if (!authResult)
             throw new ClientNotFoundException("Client not found !");
 
-        List<Currencies> currencies = new ArrayList<>();
-
         Client client = clientRepository
                 .findById(accountId)
                 .orElseThrow(() ->
                         new ClientNotFoundException("Client not found !"));
+
+        List<Currencies> currencies = new ArrayList<>();
 
         if (pin != client.getPin())
             throw new ClientNotFoundException("Client not found !");
 
         fillCurrencies(client, currencies);
 
-        return new ClientBalance(
-                client.getId(),
-                currencies
-        );
+        return new ClientBalance(client.getId(), currencies);
     }
 
     public ClientBalance getClientBalance(String login, String pass) {
-        JPAUserDetails userDetails = getUserDetails();
-
-        if (!isAuthenticate(login, pass, userDetails::getUsername, userDetails::getPassword))
-            throw new ClientNotFoundException("Client not found !");
-
+        Client client = authorizationService.authorization(new ClientRequest(login, pass));
         List<Currencies> currencies = new ArrayList<>();
 
-        Client client = clientRepository
-                .findByLoginAndPassword(login, pass)
-                .orElseThrow(() ->
-                        new ClientNotFoundException("Client not found !"));
         fillCurrencies(client, currencies);
 
         return new ClientBalance(client.getId(), currencies);
+    }
+
+    public ClientBalance depositCurrency(ClientRequestOperations request) {
+        AuthorizationDetails details = authorizationDetails.getAuthorizedUser(request);
+
+        BigDecimal newAmount = details.getCurrentBalance().getAmount().add(request.getValue());
+
+        details.getCurrentBalance().setAmount(newAmount);
+        clientRepository.save(details.getClient());
+        fillCurrencies(details.getClient(), details.getCurrencies());
+
+        return new ClientBalance(details.getClient().getId(), details.getCurrencies());
+    }
+
+    public ClientBalance withdrawCurrency(ClientRequestOperations request) {
+        AuthorizationDetails details = authorizationDetails.getAuthorizedUser(request);
+
+        if (details.getCurrentBalance().getAmount().compareTo(request.getValue()) >= 0) {
+            BigDecimal newAmount = details.getCurrentBalance().getAmount().subtract(request.getValue());
+            details.getCurrentBalance().setAmount(newAmount);
+        }
+
+        clientRepository.save(details.getClient());
+        fillCurrencies(details.getClient(), details.getCurrencies());
+
+        return new ClientBalance(details.getClient().getId(), details.getCurrencies());
     }
 
     public ServerResponse registration(RegistrationRequest request) {
@@ -80,19 +97,30 @@ public class ClientService {
                 arr.add(new Currencies(e.getName(), e.getAmount())));
     }
 
-    private <F, S> boolean isAuthenticate(String first,
-                                          String second,
-                                          Supplier<F> funcFirst,
-                                          Supplier<S> funcSecond) {
+//    private Client authorization(ClientRequest request) {
+//        JPAUserDetails userDetails = getUserDetails();
+//        boolean authResult = isAuthenticate(request.getLogin(), request.getPassword(),
+//                userDetails::getUsername, userDetails::getPassword);
+//
+//        if (!authResult)
+//            throw new ClientNotFoundException("Client not found !");
+//        return clientRepository
+//                .findByLoginAndPassword(request.getLogin(), request.getPassword())
+//                .orElseThrow(() -> new ClientNotFoundException("Client not found !"));
+//    }
 
-        return first.equals(funcFirst.get() + "") && second.equals(funcSecond.get() + "");
-    }
+//    private <F, S> boolean isAuthenticate(String first,
+//                                          String second,
+//                                          Supplier<F> funcFirst,
+//                                          Supplier<S> funcSecond) {
+//
+//        return first.equals(funcFirst.get() + "") && second.equals(funcSecond.get() + "");
+//    }
 
-    private JPAUserDetails getUserDetails() {
-        return (JPAUserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-    }
+//    private JPAUserDetails getUserDetails() {
+//        return (JPAUserDetails) SecurityContextHolder
+//                .getContext()
+//                .getAuthentication()
+//                .getPrincipal();
+//    }
 }
-

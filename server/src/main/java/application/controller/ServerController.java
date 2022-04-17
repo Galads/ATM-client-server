@@ -4,6 +4,7 @@ import application.model.AuthenticationService;
 import application.model.ClientService;
 import application.model.utils.ResponseWrapper;
 import dto.ClientRequest;
+import dto.ClientRequestOperations;
 import dto.RegistrationRequest;
 import dto.ServerResponse;
 import lombok.AllArgsConstructor;
@@ -28,9 +29,18 @@ public class ServerController {
 
     @PostMapping("/login")
     public Optional<ClientBalance> getBalanceClientLoginPass(@RequestBody ClientRequest request) {
-        return ResponseWrapper.wrap((l, p) ->
-                        clientService.getClientBalance(l, p),
+        return ResponseWrapper.wrap((l, p) -> clientService.getClientBalance(l, p),
                 request.getLogin(), request.getPassword());
+    }
+
+    @PostMapping("/deposit")
+    public Optional<ClientBalance> deposit(@RequestBody ClientRequestOperations request) {
+        return ResponseWrapper.wrap(clientService::depositCurrency, request);
+    }
+
+    @PostMapping("/withdraw")
+    public Optional<ClientBalance> withdraw(@RequestBody ClientRequestOperations request) {
+        return ResponseWrapper.wrap(clientService::withdrawCurrency, request);
     }
 
     @GetMapping("/ping")

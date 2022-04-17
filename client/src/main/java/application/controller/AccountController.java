@@ -5,6 +5,7 @@ import application.model.RequestService;
 import application.model.status.Status;
 import application.properties.AtmProperties;
 import dto.ClientRequest;
+import dto.ClientRequestOperations;
 import dto.RegistrationRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpMethod;
@@ -42,6 +43,26 @@ public class AccountController {
                 request,
                 HttpMethod.POST,
                 ClientBalance.class);
+    }
+
+    @PostMapping("/deposit")
+    public ClientBalance deposit(@RequestBody ClientRequestOperations request) {
+        return requestService.requestForObject(
+                properties.getSERVER_URL() + "/deposit",
+                request,
+                HttpMethod.POST,
+                ClientBalance.class
+        );
+    }
+
+    @PostMapping("/withdraw")
+    public ClientBalance withdraw(@RequestBody ClientRequestOperations request) {
+        return requestService.requestForObject(
+                properties.getSERVER_URL() + "/withdraw",
+                request,
+                HttpMethod.POST,
+                ClientBalance.class
+        );
     }
 
     @PostMapping("/auth")

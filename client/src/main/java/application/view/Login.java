@@ -10,6 +10,7 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.lumo.Lumo;
 import dto.ClientRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,7 +19,7 @@ import java.util.Map;
 
 @Route("login")
 @PageTitle("Login ATM")
-@Theme(variant = "valo")
+@Theme(value = Lumo.class, variant = Lumo.DARK)
 public class Login extends VerticalLayout implements BeforeEnterObserver {
     @Autowired
     AccountController accountController;
