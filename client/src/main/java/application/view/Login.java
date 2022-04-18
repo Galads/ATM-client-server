@@ -23,18 +23,15 @@ import java.util.Map;
 public class Login extends VerticalLayout implements BeforeEnterObserver {
     @Autowired
     AccountController accountController;
-
     private final LoginForm login = new LoginForm();
 
     public Login() {
-
         addClassName("login");
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
 
         login.setAction("login");
-
         add(new H1("ATM"), login);
     }
 
@@ -48,7 +45,8 @@ public class Login extends VerticalLayout implements BeforeEnterObserver {
         if (params.containsKey("error")) {
             login.setError(true);
         } else if (params.size() != 0) {
-            Status status = accountController.authenticate(new ClientRequest(params.get("username").get(0),
+            Status status = accountController.authenticate(new ClientRequest(
+                    params.get("username").get(0),
                     params.get("password").get(0)));
             if (status.equals(Status.SUCCESS)) {
                 login.setEnabled(true);

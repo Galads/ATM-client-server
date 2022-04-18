@@ -1,106 +1,56 @@
 package application.view;
 
-import application.controller.AccountController;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.PasswordField;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.value.ValueChangeMode;
-import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.lumo.Lumo;
-import dto.ClientRequest;
-import view.ClientBalance;
-import view.Currencies;
-
-import java.util.ArrayList;
 
 @Route("home")
-@Theme(value = Lumo.class, variant = Lumo.DARK)
 public class HomePage extends HorizontalLayout {
-    private VerticalLayout verticalLayout = new VerticalLayout();
-    private AccountController accountController;
-    private Grid<ClientBalance> clientBalance = new Grid<>(ClientBalance.class, false);
-    private Grid<Currencies> currencies = new Grid<>(Currencies.class);
-    private TextField login = new TextField();
-    private PasswordField pass = new PasswordField();
-    private Button btn = new Button();
-    private TextField searchField = new TextField();
 
-    private ClientBalance balance;
+    public HomePage() {
+        H1 header = new H1("Операции");
+        header.setWidth(null);
 
-    public HomePage(AccountController accountController) {
-        this.accountController = accountController;
-        initWebParams();
-        initSearchHandlers();
-        clientHandler(accountController);
+        VerticalLayout items = new VerticalLayout(
+                header,
+                createCard("отобразить баланс", VaadinIcon.WALLET, e -> balanceOperation("home/balance")),
+                createCard("внести наличные", VaadinIcon.MONEY_DEPOSIT, e -> balanceOperation("home/deposit")),
+                createCard("снять наличные", VaadinIcon.MONEY_WITHDRAW, e -> balanceOperation("home/withdraw")));
+
+        items.setSizeFull();
+        items.addClassName("workspace");
+        items.setHorizontalComponentAlignment(Alignment.CENTER, header);
+        add(items);
     }
 
-    private void initSearchHandlers() {
-        searchField.setWidth("50%");
-        searchField.setPlaceholder("Поиск");
-        searchField.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
-        searchField.setValueChangeMode(ValueChangeMode.EAGER);
+    private Component createCard(String name,
+                                 VaadinIcon icon,
+                                 ComponentEventListener<ClickEvent<Button>> listener) {
+        Button button = new Button(name);
+        button.addClickListener(listener);
+        button.setSizeFull();
+        button.setIcon(icon.create());
 
-        searchField.addValueChangeListener(e -> listBalances(e.getValue()));
+        FlexLayout card = new FlexLayout(button);
+
+        card.addClassName("card");
+        card.setAlignItems(Alignment.CENTER);
+        card.setJustifyContentMode(JustifyContentMode.CENTER);
+        card.setWidth("100%");
+        card.setHeight("200px");
+
+        return card;
     }
 
-    private void listBalances(String filterText) {
-        if (balance == null || balance.getBalance().isEmpty())
-            currencies.setItems();
-        else
-            currencies.setItems(balance.getBalance()
-                    .stream()
-                    .filter(e -> e.getName().startsWith(filterText.toUpperCase())));
-    }
-
-    private void initWebParams() {
-        clientBalance.addColumn(ClientBalance::getClientId).setHeader("Client ID");
-        clientBalance.setAllRowsVisible(true);
-        currencies.setAllRowsVisible(true);
-
-        login.setLabel("логин");
-        pass.setLabel("пароль");
-
-        btn.setText("Отправить");
-
-        setWidth("1000px");
-        setHeight("400px");
-        verticalLayout.setWidth("100px");
-
-        VerticalLayout searchTable = new VerticalLayout(searchField, currencies);
-        VerticalLayout clientTable = new VerticalLayout(clientBalance);
-        clientTable.getStyle().set("margin-top", "60px");
-
-        add(clientTable, searchTable, verticalLayout);
-        verticalLayout.add(login, pass, btn);
-    }
-
-    private void clientHandler(AccountController accountController) {
-        btn.addClickListener(event -> {
-            ClientBalance balance = accountController
-                    .getBalanceLoginPass(new ClientRequest(login.getValue(), pass.getValue()));
-            this.balance = balance;
-
-            if (balance.getBalance() == null) {
-                balance.setBalance(new ArrayList<>());
-                setButtonTheme("error");
-            } else
-                setButtonTheme("primary");
-
-            clientBalance.setItems(balance);
-            currencies.setItems(balance.getBalance());
-        });
-    }
-
-    private void setButtonTheme(String theme) {
-        ThemeList themeList = btn.getElement().getThemeList();
-        themeList.clear();
-        themeList.add(theme);
+    private void balanceOperation(String redirectPath) {
+        UI.getCurrent().navigate(redirectPath);
     }
 }

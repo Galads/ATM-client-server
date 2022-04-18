@@ -1,6 +1,5 @@
 package application.security.jwt;
 
-
 import application.properties.ServerProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.function.Function;
-
 
 @Component
 @AllArgsConstructor
