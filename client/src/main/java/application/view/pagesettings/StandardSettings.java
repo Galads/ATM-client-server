@@ -18,8 +18,8 @@ public class StandardSettings {
     private VerticalLayout verticalLayout = new VerticalLayout();
     private Grid<ClientBalance> clientBalanceGrid = new Grid<>(ClientBalance.class, false);
     private Grid<Currencies> currenciesGrid = new Grid<>(Currencies.class);
-    private TextField login = new TextField();
-    private PasswordField pass = new PasswordField();
+    private TextField firstField = new TextField();
+    private PasswordField secondPrivateField = new PasswordField();
     private Button btn = new Button();
     private TextField searchField = new TextField();
 }

@@ -22,6 +22,7 @@ public class HomePage extends HorizontalLayout {
         VerticalLayout items = new VerticalLayout(
                 header,
                 createCard("отобразить баланс", VaadinIcon.WALLET, e -> balanceOperation("home/balance")),
+                createCard("Отобразить баланс по номеру карты и PIN коду", VaadinIcon.CREDIT_CARD, e -> balanceOperation("home/balance/pin")),
                 createCard("внести наличные", VaadinIcon.MONEY_DEPOSIT, e -> balanceOperation("home/deposit")),
                 createCard("снять наличные", VaadinIcon.MONEY_WITHDRAW, e -> balanceOperation("home/withdraw")));
 

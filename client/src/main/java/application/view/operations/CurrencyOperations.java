@@ -8,7 +8,7 @@ public abstract class CurrencyOperations extends Operations {
     protected TextField value;
 
     public CurrencyOperations(AccountController accountController, String label) {
-        super(accountController);
+        super(accountController, "логин:", "пароль:");
         nameCurrency = new TextField();
         value = new TextField();
 

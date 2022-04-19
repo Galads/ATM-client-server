@@ -17,10 +17,10 @@ public abstract class Operations extends HorizontalLayout {
     protected StandardSettings settings;
     protected ClientBalance balance;
 
-    public Operations(AccountController accountController) {
+    public Operations(AccountController accountController, String fieldNameFirst, String fieldNameSecond) {
         this.accountController = accountController;
         this.settings = new StandardSettings();
-        initWebParams();
+        initWebParams(fieldNameFirst, fieldNameSecond);
         initSearchHandlers();
         clientHandler();
     }
@@ -44,24 +44,24 @@ public abstract class Operations extends HorizontalLayout {
                             .filter(e -> e.getName().startsWith(filterText.toUpperCase())));
     }
 
-    private void initWebParams() {
-        setFrontSettings();
+    private void initWebParams(String first, String second) {
+        setFrontSettings(first, second);
         VerticalLayout clientTable = new VerticalLayout(settings.getClientBalanceGrid());
         clientTable.getStyle().set("margin-top", "60px");
         add(
                 clientTable,
                 new VerticalLayout(settings.getSearchField(), settings.getCurrenciesGrid()),
                 settings.getVerticalLayout());
-        settings.getVerticalLayout().add(settings.getLogin(), settings.getPass(), settings.getBtn());
+        settings.getVerticalLayout().add(settings.getFirstField(), settings.getSecondPrivateField(), settings.getBtn());
     }
 
-    private void setFrontSettings() {
+    private void setFrontSettings(String first,String second) {
         settings.getClientBalanceGrid().addColumn(ClientBalance::getClientId).setHeader("Client ID");
         settings.getClientBalanceGrid().setAllRowsVisible(true);
         settings.getClientBalanceGrid().setAllRowsVisible(true);
 
-        settings.getLogin().setLabel("логин");
-        settings.getPass().setLabel("пароль");
+        settings.getFirstField().setLabel(first);
+        settings.getSecondPrivateField().setLabel(second);
         settings.getBtn().setText("Отправить");
 
         setWidth("1000px");

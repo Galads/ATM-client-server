@@ -8,12 +8,12 @@ import view.ClientBalance;
 @Route("home/balance")
 public class ShowBalance extends Operations {
     public ShowBalance(AccountController accountController) {
-        super(accountController);
+        super(accountController, "Логин:", "Пароль:");
     }
 
     @Override
     public ClientBalance clientRequest() {
         return accountController
-                .getBalanceLoginPass(new ClientRequest(settings.getLogin().getValue(), settings.getPass().getValue()));
+                .getBalanceLoginPass(new ClientRequest(settings.getFirstField().getValue(), settings.getSecondPrivateField().getValue()));
     }
 }

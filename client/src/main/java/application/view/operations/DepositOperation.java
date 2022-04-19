@@ -16,8 +16,8 @@ public class DepositOperation extends CurrencyOperations {
     @Override
     public ClientBalance clientRequest() {
         return accountController.deposit(new ClientRequestOperations(
-                settings.getLogin().getValue(),
-                settings.getPass().getValue(),
+                settings.getFirstField().getValue(),
+                settings.getSecondPrivateField().getValue(),
                 nameCurrency.getValue(),
                 new BigDecimal(value.getValue())));
     }
