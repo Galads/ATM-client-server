@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(properties = {"spring.config.location=classpath:application-test.yml"})
-class ServerControllerTest {
+class ServerControllersTest {
     @Autowired
     private AuthenticationService authenticationService;
     @Autowired

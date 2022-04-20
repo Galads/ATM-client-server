@@ -1,12 +1,9 @@
 package application.controller;
 
-import application.model.AuthenticationService;
 import application.model.RequestService;
-import application.model.status.Status;
 import application.properties.AtmProperties;
 import dto.ClientRequest;
 import dto.ClientRequestOperations;
-import dto.RegistrationRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +14,11 @@ import view.ClientBalance;
 @AllArgsConstructor
 public class AccountController {
     private AtmProperties properties;
-    private AuthenticationService authenticationService;
     private RequestService requestService;
 
     @GetMapping("/ping")
     public String pingClient() {
+        System.out.println();
         return "Client service available !";
     }
 
@@ -63,20 +60,5 @@ public class AccountController {
                 HttpMethod.POST,
                 ClientBalance.class
         );
-    }
-
-    @PostMapping("/auth")
-    public Status authenticate(@RequestBody ClientRequest request) {
-        return authenticationService.authenticate(request);
-    }
-
-    @PostMapping("/logout")
-    public Status logout() {
-        return authenticationService.logout();
-    }
-
-    @PostMapping("/register")
-    public Status register(@RequestBody RegistrationRequest request) {
-        return authenticationService.registration(request);
     }
 }

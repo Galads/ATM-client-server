@@ -1,6 +1,6 @@
 package application.view;
 
-import application.controller.AccountController;
+import application.controller.AuthenticationController;
 import application.model.status.Status;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.login.LoginForm;
@@ -12,7 +12,6 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import dto.ClientRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Map;
@@ -21,11 +20,12 @@ import java.util.Map;
 @PageTitle("Login ATM")
 @Theme(value = Lumo.class, variant = Lumo.DARK)
 public class Login extends VerticalLayout implements BeforeEnterObserver {
-    @Autowired
-    AccountController accountController;
+    AuthenticationController authenticationController;
+
     private final LoginForm login = new LoginForm();
 
-    public Login() {
+    public Login(AuthenticationController authenticationController) {
+        this.authenticationController = authenticationController;
         addClassName("login");
         setSizeFull();
         setAlignItems(Alignment.CENTER);
@@ -45,7 +45,7 @@ public class Login extends VerticalLayout implements BeforeEnterObserver {
         if (params.containsKey("error")) {
             login.setError(true);
         } else if (params.size() != 0) {
-            Status status = accountController.authenticate(new ClientRequest(
+            Status status = authenticationController.authenticate(new ClientRequest(
                     params.get("username").get(0),
                     params.get("password").get(0)));
             if (status.equals(Status.SUCCESS)) {

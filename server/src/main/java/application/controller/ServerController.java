@@ -1,12 +1,9 @@
 package application.controller;
 
-import application.model.AuthenticationService;
 import application.model.ClientService;
 import application.model.utils.ResponseWrapper;
 import dto.ClientRequest;
 import dto.ClientRequestOperations;
-import dto.RegistrationRequest;
-import dto.ServerResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import view.ClientBalance;
@@ -18,7 +15,6 @@ import java.util.Optional;
 @RequestMapping("/server")
 public class ServerController {
     private ClientService clientService;
-    private AuthenticationService authenticationService;
 
     @GetMapping("/{accountId}/{pin}/balance")
     public Optional<ClientBalance> getBalanceClientIdPin(
@@ -46,15 +42,5 @@ public class ServerController {
     @GetMapping("/ping")
     public String ping() {
         return "Server available";
-    }
-
-    @PostMapping("/auth")
-    public ServerResponse authenticateUser(@RequestBody ClientRequest request) {
-        return authenticationService.authenticate(request);
-    }
-
-    @PostMapping("/register")
-    public ServerResponse registerUser(@RequestBody RegistrationRequest request) {
-        return clientService.registration(request);
     }
 }
