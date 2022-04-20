@@ -24,7 +24,7 @@ public class JWT {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 100000))
                 .signWith(SignatureAlgorithm.HS256, serverProperties.getSECRET_KEY()).compact();
     }
 
